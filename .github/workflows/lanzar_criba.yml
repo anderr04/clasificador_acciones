@@ -1,0 +1,31 @@
+name: Ejecutar Criba Nocturna
+
+on: workflow_dispatch  # Botón manual
+
+jobs:
+  buscando-gangas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360  # 6 horas máximo
+
+    steps:
+    - name: Descargar tu repositorio
+      uses: actions/checkout@v3
+
+    # AQUÍ ESTÁ EL CAMBIO: Usamos la versión 3.12
+    - name: Instalar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12' 
+
+    - name: Instalar librerías
+      run: pip install pandas yfinance tqdm lxml requests
+
+    - name: EJECUTAR TU SCRIPT
+      run: python criba_empresas.py
+
+    - name: Guardar el CSV resultante
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: RESULTADOS_FINALES
+        path: RESULTADOS_GANGAS.csv
