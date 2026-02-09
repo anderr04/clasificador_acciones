@@ -11,8 +11,7 @@ jobs:
     - name: Descargar tu repositorio
       uses: actions/checkout@v3
 
-    # AQUÍ ESTÁ EL CAMBIO: Usamos la versión 3.12
-    - name: Instalar Python
+    - name: Instalar Python 3.12
       uses: actions/setup-python@v4
       with:
         python-version: '3.12' 
@@ -20,12 +19,20 @@ jobs:
     - name: Instalar librerías
       run: pip install pandas yfinance tqdm lxml requests
 
+    # OJO: Asegúrate de que tu archivo se llama así en el repo
     - name: EJECUTAR TU SCRIPT
       run: python criba_empresas.py
 
-    - name: Guardar el CSV resultante
+    # --- PASO DE SEGURIDAD: VER QUÉ SE HA CREADO ---
+    - name: Listar archivos generados (Debug)
+      if: always()
+      run: ls -R
+    # -----------------------------------------------
+
+    - name: Guardar TODOS los CSV resultantes
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: RESULTADOS_FINALES
-        path: RESULTADOS_GANGAS.csv
+        path: "*.csv"
+        if-no-files-found: warn
